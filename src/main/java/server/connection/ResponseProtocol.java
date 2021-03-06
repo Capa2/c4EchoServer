@@ -13,12 +13,14 @@ public class ResponseProtocol implements Runnable, Closeable {
     }
 
     @Override
-    public void close() throws IOException {
+    public void run() {
 
     }
 
     @Override
-    public void run() {
+    public void close() throws IOException {
 
     }
+
+
 }

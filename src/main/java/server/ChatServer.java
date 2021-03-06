@@ -1,4 +1,5 @@
 package server;
+
 import java.net.Socket;
 import java.net.UnknownHostException;
 import java.util.Map;
@@ -22,9 +23,7 @@ public class ChatServer {
             System.out.println("Illegal inputs provided when starting the server!");
             return;
         }
-
         Server server = new Server(port);
     }
-
 
 }

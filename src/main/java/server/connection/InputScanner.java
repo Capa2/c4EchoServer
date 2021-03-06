@@ -13,12 +13,27 @@ public class InputScanner implements Runnable, Closeable {
     }
 
     @Override
-    public void close() throws IOException {
-        
+    public void run() {
+        //while (????) {
+            scan(connections);
+        //}
     }
 
     @Override
-    public void run() {
+    public void close() throws IOException {
 
+    }
+
+    private void scan(Vector<Socket> sockets) {
+        sockets.forEach((socket) -> {
+                    try {
+                        if (socket.getInputStream().available() > 0) {
+                        // what to do if a client has sent data to the server
+                        }
+                    } catch (IOException e) {
+                        e.printStackTrace();
+                    }
+                }
+        ); // forEach end
     }
 }
