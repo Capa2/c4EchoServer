@@ -5,8 +5,8 @@ import java.net.Socket;
 import java.util.Vector;
 
 public class InputScanner implements Runnable, Closeable {
-    Vector<Socket> connections;
-    boolean open;
+    final private Vector<Socket> connections;
+    private boolean open;
 
     public InputScanner(Vector<Socket> connections) {
         this.connections = connections;
@@ -15,6 +15,7 @@ public class InputScanner implements Runnable, Closeable {
 
     @Override
     public void run() {
+        open = true;
         while (open) {
             scan(connections);
         }
@@ -30,6 +31,7 @@ public class InputScanner implements Runnable, Closeable {
                     try {
                         if (socket.getInputStream().available() > 8) {
                             String input = new DataInputStream(new BufferedInputStream(socket.getInputStream())).readUTF();
+                            // notifyAll();
                         // what to do if a client has sent data to the server...  send to Server class? responseprotocol?
                         }
                     } catch (IOException e) {

@@ -6,8 +6,8 @@ import java.net.Socket;
 import java.util.Vector;
 
 public class Listener implements Runnable, Closeable {
-    ServerSocket serverSocket;
-    Vector<Socket> connections;
+    private ServerSocket serverSocket;
+    final private Vector<Socket> connections;
 
     public Listener(Vector<Socket> sockets, int port) {
         this.connections = sockets;
