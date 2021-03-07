@@ -1,5 +1,4 @@
 package server.connection;
-
 import java.io.Closeable;
 import java.io.IOException;
 import java.net.ServerSocket;
@@ -44,6 +43,8 @@ public class Listener implements Runnable, Closeable {
             serverSocket.close();
         } catch (IOException e) {
             e.printStackTrace();
+        } finally {
+            System.out.println("Listener terminated.");
         }
     }
 

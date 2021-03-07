@@ -1,7 +1,6 @@
 package server.connection;
 
-import java.io.Closeable;
-import java.io.IOException;
+import java.io.*;
 import java.net.Socket;
 import java.util.Vector;
 
@@ -29,7 +28,8 @@ public class InputScanner implements Runnable, Closeable {
     private void scan(Vector<Socket> sockets) {
         sockets.forEach((socket) -> {
                     try {
-                        if (socket.getInputStream().available() > 0) {
+                        if (socket.getInputStream().available() > 8) {
+                            String input = new DataInputStream(new BufferedInputStream(socket.getInputStream())).readUTF();
                         // what to do if a client has sent data to the server...  send to Server class? responseprotocol?
                         }
                     } catch (IOException e) {
