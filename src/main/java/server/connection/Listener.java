@@ -17,7 +17,6 @@ public class Listener implements Runnable, Closeable {
         } catch (IOException e) {
             e.printStackTrace();
         }
-
     }
 
     private void listen(ServerSocket serverSocket) {
@@ -29,12 +28,19 @@ public class Listener implements Runnable, Closeable {
             e.printStackTrace();
         }
         if (s.isConnected()) sessions.add(new Session(s));
+
     }
+
+    private void removeClosed() {
+        for (Session s : sessions) if (s.isClosed()) sessions.remove(s);
+    }
+
 
     @Override
     public void run() {
         while (isOnline()) {
             listen(serverSocket);
+            removeClosed();
         }
     }
 

@@ -8,6 +8,7 @@ public class Session implements Closeable {
     private DataInputStream in;
     private DataOutputStream out;
     private String user;
+    private boolean isClosed;
 
     public Session(Socket socket) {
         this.socket = socket;
@@ -24,6 +25,8 @@ public class Session implements Closeable {
             out.writeUTF(string);
         } catch (IOException e) {
             e.printStackTrace();
+        } finally {
+            if(string.startsWith("CLOSE#")) close();
         }
     }
 
@@ -54,12 +57,17 @@ public class Session implements Closeable {
         return user;
     }
 
+    public boolean isClosed() {
+        return isClosed;
+    }
 
     public void close() {
         try {
             socket.close();
         } catch (IOException e) {
             e.printStackTrace();
+        } finally {
+            isClosed = true;
         }
     }
 }

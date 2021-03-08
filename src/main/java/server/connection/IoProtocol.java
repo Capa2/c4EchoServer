@@ -1,26 +1,25 @@
 package server.connection;
 
 import java.io.*;
-import java.util.Map;
 import java.util.StringTokenizer;
 import java.util.Vector;
-import java.util.concurrent.ConcurrentHashMap;
 
 public class IoProtocol implements Runnable, Closeable {
     final private Vector<Session> sessions;
-    final private Map<String, Boolean> users;
+    final private String[] validNames;
     private boolean open;
 
-    public IoProtocol(Vector<Session> sessions, ConcurrentHashMap<String, Boolean> users) {
-        this.users = users;
+    public IoProtocol(Vector<Session> sessions) {
+        validNames = new String[] {"Johan", "Jens", "Alex"};
         this.sessions = sessions;
         open = false;
     }
 
     private void scan(Vector<Session> sessions) {
-        sessions.forEach((ses) -> {
+        for (Session ses : sessions) {
+            if (ses.isClosed()) continue;
             if (ses.hasIncomingData()) handleInput(ses, ses.pull());
-        });
+        }
     }
 
     private void handleInput(Session ses, String input) {
@@ -36,11 +35,10 @@ public class IoProtocol implements Runnable, Closeable {
         } else if (ses.getUser() == null) {
             if (token.equals("CONNECT")) {
                 String myNameIs = tokenizer.nextToken();
-                for (Map.Entry entry : users.entrySet()) {
-                    if (myNameIs.equals(entry.getKey())) {
-                        ses.setUser(myNameIs);
-                        users.put(myNameIs, true); // true = online;
-                        ses.push(getOnlineUserString());
+                for (String validName : validNames) {
+                    if (myNameIs.equals(validName)) {
+                        ses.setUser(validName);
+                        for (Session s : sessions) if(s.getUser() != null) s.push(getOnlineUserString());
                         break;
                     }
                 }
@@ -50,25 +48,21 @@ public class IoProtocol implements Runnable, Closeable {
         } else if (token.equals("SEND")) {
             if (tokenCount == 3) {
                 String receiver = tokenizer.nextToken();
-                sessions.forEach((session) -> {
-                    if (session.getUser() != null) {
-                        if (receiver.equals(session.getUser()) || receiver.equals("*")) {
-                            session.push("MESSAGE#" + tokenizer.nextToken());
-                        }
-                    }
-                });
+                String message = tokenizer.nextToken();
+                for (Session s : sessions) {
+                    if (s.getUser() == null || !receiver.equals(s.getUser()) && !receiver.equals("*")) continue;
+                    s.push("MESSAGE#" + message);
+                }
             } else ses.push("CLOSE#1"); // wrong amount of tokens for message
         } else ses.push("CLOSE#1"); // user didn't call CONNECT, SEND or CLOSE
     }
 
     private String getOnlineUserString() {
         StringBuilder onlineUsers = new StringBuilder("ONLINE#");
-        users.forEach((key, value) -> {
-            if (value) {
-                onlineUsers.append(key);
+        for (Session s : sessions) if (s.getUser() != null) {
+                onlineUsers.append(s.getUser());
                 onlineUsers.append(",");
-            }
-        });
+        }
         onlineUsers.deleteCharAt(onlineUsers.lastIndexOf(","));
         return onlineUsers.toString();
     }
@@ -76,13 +70,9 @@ public class IoProtocol implements Runnable, Closeable {
     @Override
     public void run() {
         open = true;
-        while (open) {
-            scan(sessions);
-        }
+        while (open) scan(sessions);
     }
 
     @Override
-    public void close() {
-        open = false;
-    }
+    public void close() {open = false;}
 }
