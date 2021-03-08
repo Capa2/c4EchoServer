@@ -25,23 +25,40 @@ public class IoProtocol implements Runnable, Closeable {
 
     private void handleInput(Session ses, String input) {
         StringTokenizer tokenizer = new StringTokenizer(input, "#");
-        if (tokenizer.hasMoreTokens()) {
-            String token = tokenizer.nextToken();
-            if (ses.getUser() == null) {
-                if (token.equals("CONNECT")) {
-                    String myNameIs = tokenizer.nextToken();
-                    users.forEach((key, value) -> {
-                        if (myNameIs.equals(key)) {
-                            ses.setUser(myNameIs);
-                            users.put(myNameIs, true); // true = online;
-                            ses.push(getOnlineUserString());
-                        }
-                    });
-                } else {
-                    ses.push("CLOSE#2");
+        int tokenCount = tokenizer.countTokens();
+        if (tokenCount <= 0 || tokenCount >= 4) {
+            ses.push("CLOSE#1");
+            return;
+        }
+        String token = tokenizer.nextToken();
+        if (token.equals("CLOSE")) {
+            ses.push((tokenCount == 1) ? "CLOSE#0" : "CLOSE#1");
+        } else if (ses.getUser() == null) {
+            if (token.equals("CONNECT")) {
+                String myNameIs = tokenizer.nextToken();
+                for (Map.Entry entry : users.entrySet()) {
+                    if (myNameIs.equals(entry.getKey())) {
+                        ses.setUser(myNameIs);
+                        users.put(myNameIs, true); // true = online;
+                        ses.push(getOnlineUserString());
+                        break;
+                    }
                 }
-            }
-        } else ses.push("CLOSE#1"); // no tokens: illegal input
+                if (ses.getUser() == null) ses.push("CLOSE#2"); // user not found
+
+            } else ses.push("CLOSE#1"); // unassigned user didn't call CONNECT
+        } else if (token.equals("SEND")) {
+            if (tokenCount == 3) {
+                String receiver = tokenizer.nextToken();
+                sessions.forEach((session) -> {
+                    if (session.getUser() != null) {
+                        if (receiver.equals(session.getUser()) || receiver.equals("*")) {
+                            session.push("MESSAGE#" + tokenizer.nextToken());
+                        }
+                    }
+                });
+            } else ses.push("CLOSE#1"); // wrong amount of tokens for message
+        } else ses.push("CLOSE#1"); // user didn't call CONNECT, SEND or CLOSE
     }
 
     private String getOnlineUserString() {
