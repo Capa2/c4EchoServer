@@ -1,4 +1,5 @@
 package server.connection;
+
 import java.io.Closeable;
 import java.io.IOException;
 import java.net.ServerSocket;
@@ -7,10 +8,10 @@ import java.util.Vector;
 
 public class Listener implements Runnable, Closeable {
     private ServerSocket serverSocket;
-    final private Vector<Socket> connections;
+    final private Vector<Session> sessions;
 
-    public Listener(Vector<Socket> sockets, int port) {
-        this.connections = sockets;
+    public Listener(Vector<Session> sessions, int port) {
+        this.sessions = sessions;
         try {
             this.serverSocket = new ServerSocket(port);
         } catch (IOException e) {
@@ -20,14 +21,14 @@ public class Listener implements Runnable, Closeable {
     }
 
     private void listen(ServerSocket serverSocket) {
-        Socket newClient = null;
+        Socket s = null;
         try {
-            newClient = this.serverSocket.accept();
+            s = this.serverSocket.accept();
+            System.out.println("Client connected from " + serverSocket.getLocalSocketAddress());
         } catch (IOException e) {
             e.printStackTrace();
-        } finally {
-            if(newClient.isConnected()) connections.add(newClient);
         }
+        if (s.isConnected()) sessions.add(new Session(s));
     }
 
     @Override
@@ -43,9 +44,9 @@ public class Listener implements Runnable, Closeable {
             serverSocket.close();
         } catch (IOException e) {
             e.printStackTrace();
-        } finally {
-            System.out.println("Listener terminated.");
         }
+        System.out.println("Listener terminated.");
+
     }
 
     public boolean isOnline() {
