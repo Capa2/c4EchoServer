@@ -22,6 +22,7 @@ public class IoProtocol implements Runnable, Closeable {
         }
     }
 
+    // PROTOCOL START
     private void handleInput(Session ses, String input) {
         StringTokenizer tokenizer = new StringTokenizer(input, "#");
         int tokenCount = tokenizer.countTokens();
@@ -30,22 +31,27 @@ public class IoProtocol implements Runnable, Closeable {
             return;
         }
         String token = tokenizer.nextToken();
+        // CLOSE PROTOCOL (CLIENT SIDE)
         if (token.equals("CLOSE")) {
             ses.push((tokenCount == 1) ? "CLOSE#0" : "CLOSE#1");
-        } else if (ses.getUser() == null) {
+        }
+        // CONNECT PROTOCOL
+        else if (ses.getUser() == null) {
             if (token.equals("CONNECT")) {
                 String myNameIs = tokenizer.nextToken();
                 for (String validName : validNames) {
                     if (myNameIs.equals(validName)) {
                         ses.setUser(validName);
-                        for (Session s : sessions) if(s.getUser() != null) s.push(getOnlineUserString());
+                        for (Session s : sessions) if(s.getUser() != null) s.push(getOnlineString());
                         break;
                     }
                 }
                 if (ses.getUser() == null) ses.push("CLOSE#2"); // user not found
 
             } else ses.push("CLOSE#1"); // unassigned user didn't call CONNECT
-        } else if (token.equals("SEND")) {
+        }
+        // SEND PROTOCOL
+        else if (token.equals("SEND")) {
             if (tokenCount == 3) {
                 String receiver = tokenizer.nextToken();
                 String message = tokenizer.nextToken();
@@ -55,9 +61,9 @@ public class IoProtocol implements Runnable, Closeable {
                 }
             } else ses.push("CLOSE#1"); // wrong amount of tokens for message
         } else ses.push("CLOSE#1"); // user didn't call CONNECT, SEND or CLOSE
-    }
+    } // PROTOCOL END
 
-    private String getOnlineUserString() {
+    private String getOnlineString() {
         StringBuilder onlineUsers = new StringBuilder("ONLINE#");
         for (Session s : sessions) if (s.getUser() != null) {
                 onlineUsers.append(s.getUser());

@@ -1,9 +1,6 @@
 package server;
 
-import java.net.Socket;
 import java.net.UnknownHostException;
-import java.util.Map;
-import java.util.Vector;
 
 public class ChatServer {
     //Call server with arguments like this: 0.0.0.0 8088 logfile.log
@@ -16,7 +13,7 @@ public class ChatServer {
                 ip = args[0];
                 port = Integer.parseInt(args[1]);
                 logFile = args[2];
-            } else {
+            } else { // UNCOMMENT THIS TO DISALLOW NO ARGS IN MAIN
                 //throw new IllegalArgumentException("Server not provided with the right arguments");
             }
         } catch (NumberFormatException ne) {
