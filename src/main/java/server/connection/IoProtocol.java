@@ -52,10 +52,20 @@ public class IoProtocol implements Runnable, Closeable {
         }
         // SEND PROTOCOL
         else if (token.equals("SEND")) {
+
+            String[] rx = new String[0];
+
             if (tokenCount == 3) {
                 String receiver = tokenizer.nextToken();
+                if(receiver.contains(",")){
+                    rx = receiver.split(",");
+                }
                 String message = tokenizer.nextToken();
                 for (Session s : sessions) {
+                    for(int i = 0; i <= rx.length-1; i++){
+                        if (s.getUser() == null || !rx[i].equals(s.getUser()) && !rx[i].equals("*")) continue;
+                        s.push("MESSAGE#" + message);
+                    }
                     if (s.getUser() == null || !receiver.equals(s.getUser()) && !receiver.equals("*")) continue;
                     s.push("MESSAGE#" + message);
                 }
