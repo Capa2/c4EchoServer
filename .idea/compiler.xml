@@ -6,13 +6,12 @@
         <sourceOutputDir name="target/generated-sources/annotations" />
         <sourceTestOutputDir name="target/generated-test-sources/test-annotations" />
         <outputRelativeToContentRoot value="true" />
-        <module name="chat-server" />
-        <module name="echo_classdemo" />
+        <module name="c4EchoServer" />
       </profile>
     </annotationProcessing>
     <bytecodeTargetLevel>
+      <module name="c4EchoServer" target="8" />
       <module name="chat-server" target="8" />
-      <module name="echo_classdemo" target="8" />
     </bytecodeTargetLevel>
   </component>
 </project>

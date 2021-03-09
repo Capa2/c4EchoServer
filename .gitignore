@@ -9,7 +9,8 @@
 /deploy/*.log
 /deploy/*.jar
 
-*.iml
+//*.iml
+*plantuml
 
 /target
 
