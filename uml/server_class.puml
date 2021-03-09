@@ -1,0 +1,68 @@
+@startuml
+'https://plantuml.com/class-diagram
+class ChatServer {
+ip : int
+port : int
+logfile : String
++main()
+}
+class Logger {
+logfile : String
+..?????..
+}
+
+class Session {
+socket : Socket
+in : DataInputStream
+out : DataOutputStream
+user : String
+isClosed : boolean
++Session(Socket socket) : constr.
++push(String string) : void
++String pull() : String
++hasIncomingData() : boolean
++setUser(String user) : void
++getUser() : String
++isClosed() : boolean
++close() : void
+}
+
+class Server {
+executor : ExecutorService
+sessions : Vector<session>
++Server(int port) : constr.
+}
+
+class Listener {
+serverSocket : ServerSocket
+sessions : Vector<session>
++Listener(Vector<Session> sessions, int port) : constr.
+-listen(ServerSocket serverSocket) : void
+-removeClosed() : void
++isOnline() : boolean
++run() : void
++close() : void
+}
+
+class IoProtocol {
+sessions : Vector<Session>
+validNames : String[]
+open : boolean
++IoProtocol(Vector<Session> sessions) : constr.
+-scan(Vector<Session> sessions) : void
+-handleInput(Session ses, String input) : void
++run() : void
++close() : void
+}
+
+ChatServer -o Logger : aggregation
+ChatServer --o Server : aggregation
+
+Server "1"--*"1" IoProtocol : aggregation
+Server "1"--*"1" Listener : aggregation
+Session "*"*.up."1" Server : contains
+Session "*"*..left.."1" IoProtocol : contains
+Session "*"*..right.."1" Listener : contains
+
+@enduml
+
