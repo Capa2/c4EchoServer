@@ -23,13 +23,13 @@ public class Listener implements Runnable, Closeable {
     private void listen(ServerSocket serverSocket) {
         Socket s = null;
         try {
-            s = this.serverSocket.accept();
+            s = serverSocket.accept();
             System.out.println("Client connected from " + s.getLocalSocketAddress());
         } catch (IOException e) {
             e.printStackTrace();
             close();
         }
-        if (s.isConnected()) sessions.add(new Session(s));
+        if (s != null) sessions.add(new Session(s));
 
     }
 
