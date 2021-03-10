@@ -23,6 +23,7 @@ public class Session implements Closeable {
     public void push(String string) {
         try {
             out.writeUTF(string);
+            System.out.println("OUT@" + socket.getLocalSocketAddress() + ": " + string);
         } catch (IOException e) {
             e.printStackTrace();
         } finally {
@@ -32,7 +33,9 @@ public class Session implements Closeable {
 
     public String pull() {
         try {
-            return in.readUTF();
+            String input = in.readUTF();
+            System.out.println("IN@" + socket.getLocalSocketAddress() + ": " + input);
+            return input;
         } catch (IOException e) {
             e.printStackTrace();
         }
