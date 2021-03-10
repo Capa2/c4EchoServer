@@ -16,6 +16,7 @@ public class Listener implements Runnable, Closeable {
             this.serverSocket = new ServerSocket(port);
         } catch (IOException e) {
             e.printStackTrace();
+            close();
         }
     }
 
@@ -23,7 +24,7 @@ public class Listener implements Runnable, Closeable {
         Socket s = null;
         try {
             s = this.serverSocket.accept();
-            System.out.println("Client connected from " + serverSocket.getLocalSocketAddress());
+            System.out.println("Client connected from " + s.getLocalSocketAddress());
         } catch (IOException e) {
             e.printStackTrace();
             close();
@@ -46,9 +47,9 @@ public class Listener implements Runnable, Closeable {
             serverSocket.close();
         } catch (IOException e) {
             e.printStackTrace();
+        } finally {
+            System.out.println("Serversocket closed.");
         }
-        System.out.println("Listener terminated.");
-
     }
 
     public boolean isOnline() {

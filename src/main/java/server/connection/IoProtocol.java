@@ -10,7 +10,7 @@ public class IoProtocol implements Runnable, Closeable {
     private boolean open;
 
     public IoProtocol(Vector<Session> sessions) {
-        validNames = new String[] {"Johan", "Jens", "Alex"};
+        validNames = new String[]{"Johan", "Jens", "Alex"};
         this.sessions = sessions;
         open = false;
     }
@@ -47,7 +47,7 @@ public class IoProtocol implements Runnable, Closeable {
                 for (String validName : validNames) {
                     if (myNameIs.equals(validName)) {
                         ses.setUser(validName);
-                        for (Session s : sessions) if(s.getUser() != null) s.push(getOnlineString());
+                        for (Session s : sessions) if (s.getUser() != null) s.push(getOnlineString());
                         break;
                     }
                 }
@@ -62,12 +62,12 @@ public class IoProtocol implements Runnable, Closeable {
 
             if (tokenCount == 3) {
                 String receiver = tokenizer.nextToken();
-                if(receiver.contains(",")){
+                if (receiver.contains(",")) {
                     rx = receiver.split(","); // seperates usernames in case of multiple recipients
                 }
                 String message = tokenizer.nextToken();
                 for (Session s : sessions) {
-                    for(int i = 0; i <= rx.length-1; i++){  // sends message to each recipient in case of multiple recipients
+                    for (int i = 0; i <= rx.length - 1; i++) {  // sends message to each recipient in case of multiple recipients
                         if (s.getUser() == null || !rx[i].equals(s.getUser()) && !rx[i].equals("*")) continue;
                         s.push("MESSAGE#" + message);
                     }
@@ -80,10 +80,11 @@ public class IoProtocol implements Runnable, Closeable {
 
     private String getOnlineString() {
         StringBuilder onlineUsers = new StringBuilder("ONLINE#");
-        for (Session s : sessions) if (s.getUser() != null) {
+        for (Session s : sessions)
+            if (s.getUser() != null) {
                 onlineUsers.append(s.getUser());
                 onlineUsers.append(",");
-        }
+            }
         onlineUsers.deleteCharAt(onlineUsers.lastIndexOf(","));
         return onlineUsers.toString();
     }
@@ -95,5 +96,7 @@ public class IoProtocol implements Runnable, Closeable {
     }
 
     @Override
-    public void close() {open = false;}
+    public void close() {
+        open = false;
+    }
 }

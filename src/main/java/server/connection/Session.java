@@ -26,7 +26,7 @@ public class Session implements Closeable {
         } catch (IOException e) {
             e.printStackTrace();
         } finally {
-            if(string.startsWith("CLOSE#")) close();
+            if (string.startsWith("CLOSE#")) close();
         }
     }
 
@@ -63,6 +63,7 @@ public class Session implements Closeable {
 
     public void close() {
         try {
+            System.out.println("Closing connection from " + socket.getLocalSocketAddress());
             socket.close();
         } catch (IOException e) {
             e.printStackTrace();
