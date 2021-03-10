@@ -12,7 +12,7 @@ public class Session implements Closeable {
     private String user;
     private boolean isClosed;
 
-    private final static Logger logger = Logger.getLogger( Logger.GLOBAL_LOGGER_NAME );
+    private final static Logger logger = Logger.getLogger("global");
 
     public Session(Socket socket) {
         this.socket = socket;

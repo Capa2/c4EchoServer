@@ -5,7 +5,7 @@ import java.net.UnknownHostException;
 import java.util.logging.*;
 
 public class ChatServer {
-    private final static Logger logger = Logger.getLogger( Logger.GLOBAL_LOGGER_NAME );
+    private final static Logger logger = Logger.getLogger("global");
 
     private static void setupLogger() {
         // reset logmanager and set new log.level to ALL
@@ -14,13 +14,12 @@ public class ChatServer {
 
         // Handler for console logs
         ConsoleHandler ch = new ConsoleHandler();
-        ch.setLevel(Level.SEVERE);
+        ch.setLevel(Level.INFO);
         logger.addHandler(ch);
 
         // Handler for logging into file
         try {
             FileHandler fh = new FileHandler("MyLogger.log", true);// append is set to true
-            fh.setFormatter(new SimpleFormatter());
             fh.setLevel(Level.FINE);
             logger.addHandler(fh);
         } catch (IOException e) {
@@ -29,6 +28,8 @@ public class ChatServer {
     }
     //Call server with arguments like this: 0.0.0.0 8088 logfile.log
     public static void main(String[] args) throws UnknownHostException {
+        ChatServer.setupLogger();
+
         String ip = "localhost";
         int port = 8088;
         String logFile = "log.txt";  //Do we need this

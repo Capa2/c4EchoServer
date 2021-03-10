@@ -12,7 +12,7 @@ public class Listener implements Runnable, Closeable {
     private ServerSocket serverSocket;
     final private Vector<Session> sessions;
 
-    private final static Logger logger = Logger.getLogger( Logger.GLOBAL_LOGGER_NAME );
+    private final static Logger logger = Logger.getLogger("global");
 
     public Listener(Vector<Session> sessions, int port) {
         this.sessions = sessions;

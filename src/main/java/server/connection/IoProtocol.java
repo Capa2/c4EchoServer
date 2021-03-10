@@ -3,11 +3,14 @@ package server.connection;
 import java.io.*;
 import java.util.StringTokenizer;
 import java.util.Vector;
+import java.util.logging.Logger;
 
 public class IoProtocol implements Runnable, Closeable {
     final private Vector<Session> sessions;
     final private String[] validNames;
     private boolean open;
+
+    private final static Logger logger = Logger.getLogger("global");
 
     public IoProtocol(Vector<Session> sessions) {
         validNames = new String[]{"Johan", "Jens", "Alex"};
