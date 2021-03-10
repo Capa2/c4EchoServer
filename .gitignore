@@ -1,6 +1,6 @@
 /deploy/*.log
 /deploy/*.jar
-
+/.idea
 # Created by https://www.toptal.com/developers/gitignore/api/intellij+iml,maven,git
 # Edit at https://www.toptal.com/developers/gitignore?templates=intellij+iml,maven,git
 
