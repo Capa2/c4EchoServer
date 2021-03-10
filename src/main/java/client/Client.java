@@ -17,7 +17,7 @@ public class Client {
 
         Scanner scn = new Scanner(System.in);
 
-        InetAddress ip = InetAddress.getByName("karpantschof.com");
+        InetAddress ip = InetAddress.getByName("localhost");
 
         Socket s = new Socket(ip, ServerPort);
 
