@@ -5,10 +5,14 @@ import java.io.IOException;
 import java.net.ServerSocket;
 import java.net.Socket;
 import java.util.Vector;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 public class Listener implements Runnable, Closeable {
     private ServerSocket serverSocket;
     final private Vector<Session> sessions;
+
+    private final static Logger logger = Logger.getLogger( Logger.GLOBAL_LOGGER_NAME );
 
     public Listener(Vector<Session> sessions, int port) {
         this.sessions = sessions;
@@ -17,6 +21,7 @@ public class Listener implements Runnable, Closeable {
         } catch (IOException e) {
             e.printStackTrace();
             close();
+            logger.log(Level.WARNING, "Error creating a new ServerSocket//Stream Closed", e);
         }
     }
 
@@ -24,9 +29,11 @@ public class Listener implements Runnable, Closeable {
         Socket s = null;
         try {
             s = this.serverSocket.accept();
-            System.out.println("Client connected from " + s.getLocalSocketAddress());
+            logger.log(Level.INFO, "Client connected from " + s.getLocalSocketAddress());
+            //System.out.println("Client connected from " + s.getLocalSocketAddress());
         } catch (IOException e) {
-            e.printStackTrace();
+            //e.printStackTrace();
+            logger.log(Level.WARNING, "Error in accepting the newClient", e);
             close();
         }
         if (s.isConnected()) sessions.add(new Session(s));
@@ -46,9 +53,11 @@ public class Listener implements Runnable, Closeable {
         try {
             serverSocket.close();
         } catch (IOException e) {
-            e.printStackTrace();
+            logger.log(Level.SEVERE, "ServerSocket could not be closed successfully", e);
+            //e.printStackTrace();
         } finally {
-            System.out.println("Serversocket closed.");
+            logger.log(Level.INFO, "Serversocket closed.");
+            //System.out.println("Serversocket closed.");
         }
     }
 

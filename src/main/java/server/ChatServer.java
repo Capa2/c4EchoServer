@@ -1,8 +1,32 @@
 package server;
 
+import java.io.IOException;
 import java.net.UnknownHostException;
+import java.util.logging.*;
 
 public class ChatServer {
+    private final static Logger logger = Logger.getLogger( Logger.GLOBAL_LOGGER_NAME );
+
+    private static void setupLogger() {
+        // reset logmanager and set new log.level to ALL
+        LogManager.getLogManager().reset();
+        logger.setLevel(Level.ALL);
+
+        // Handler for console logs
+        ConsoleHandler ch = new ConsoleHandler();
+        ch.setLevel(Level.SEVERE);
+        logger.addHandler(ch);
+
+        // Handler for logging into file
+        try {
+            FileHandler fh = new FileHandler("MyLogger.log", true);// append is set to true
+            fh.setFormatter(new SimpleFormatter());
+            fh.setLevel(Level.FINE);
+            logger.addHandler(fh);
+        } catch (IOException e) {
+            logger.log(Level.SEVERE, "File logger not working.", e);
+        }
+    }
     //Call server with arguments like this: 0.0.0.0 8088 logfile.log
     public static void main(String[] args) throws UnknownHostException {
         String ip = "localhost";

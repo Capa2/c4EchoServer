@@ -2,6 +2,8 @@ package server.connection;
 
 import java.io.*;
 import java.net.Socket;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 public class Session implements Closeable {
     final private Socket socket;
@@ -10,13 +12,16 @@ public class Session implements Closeable {
     private String user;
     private boolean isClosed;
 
+    private final static Logger logger = Logger.getLogger( Logger.GLOBAL_LOGGER_NAME );
+
     public Session(Socket socket) {
         this.socket = socket;
         try {
             in = new DataInputStream(new BufferedInputStream(socket.getInputStream()));
             out = new DataOutputStream(socket.getOutputStream());
         } catch (IOException e) {
-            e.printStackTrace();
+            logger.log(Level.SEVERE, "Error in creating DataInput-/DataOutputStream for socket : " + this.socket, e);
+            //e.printStackTrace();
         }
     }
 
@@ -25,9 +30,11 @@ public class Session implements Closeable {
             out.writeUTF(string);
             System.out.println("OUT@" + socket.getLocalSocketAddress() + ": " + string);
         } catch (IOException e) {
-            e.printStackTrace();
+            logger.log(Level.SEVERE, "Error in writing", e);
+            //e.printStackTrace();
         } finally {
             if (string.startsWith("CLOSE#")) close();
+            logger.log(Level.INFO, "Closed the stream succesfully");
         }
     }
 
@@ -37,7 +44,8 @@ public class Session implements Closeable {
             System.out.println("IN@" + socket.getLocalSocketAddress() + ": " + input);
             return input;
         } catch (IOException e) {
-            e.printStackTrace();
+            logger.log(Level.SEVERE, "Error in reading", e);
+            //e.printStackTrace();
         }
         return null;
     }
@@ -47,7 +55,8 @@ public class Session implements Closeable {
         try {
             bytes = in.available();
         } catch (IOException e) {
-            e.printStackTrace();
+            logger.log(Level.SEVERE, "Error in reading available incomming data", e);
+            //e.printStackTrace();
         }
         return bytes > 0;
     }
@@ -69,7 +78,8 @@ public class Session implements Closeable {
             System.out.println("Closing connection from " + socket.getLocalSocketAddress());
             socket.close();
         } catch (IOException e) {
-            e.printStackTrace();
+            logger.log(Level.SEVERE, "Error in closing connection", e);
+            //e.printStackTrace();
         } finally {
             isClosed = true;
         }
