@@ -24,7 +24,7 @@ public class IoProtocol implements Runnable, Closeable {
     }
 
     private void removeClosed() {
-        for (Session s : sessions) if (s.isClosed()) sessions.remove(s);
+        sessions.removeIf(Session::isClosed);
     }
 
     // PROTOCOL START
@@ -57,25 +57,18 @@ public class IoProtocol implements Runnable, Closeable {
         }
         // SEND PROTOCOL
         else if (token.equals("SEND")) {
-
             String[] rx = new String[0]; // String array for storing handles for multiple recipients
-
             if (tokenCount == 3) {
                 String receiver = tokenizer.nextToken();
-                /*
-                if (receiver.contains(",")) {
-                    rx = receiver.split(","); // seperates usernames in case of multiple recipients
-                }
-                */
                 String message = tokenizer.nextToken();
+                if (receiver.contains(",")) {
+                    rx = receiver.split(","); // separates usernames in case of multiple recipients
+                }
                 for (Session s : sessions) {
-                    /*
-                    for (int i = 0; i <= rx.length - 1; i++) {  // sends message to each recipient in case of multiple recipients
-
+                    if(rx.length != 0) for (int i = 0; i <= rx.length - 1; i++) {  // sends message to each recipient in case of multiple recipients
                         if (s.getUser() == null || !rx[i].equals(s.getUser()) && !rx[i].equals("*")) continue;
                         s.push("MESSAGE#" + message);
                     }
-                    */
                     if (s.getUser() == null || !receiver.equals(s.getUser()) && !receiver.equals("*")) continue;
                     s.push("MESSAGE#" + message);
                 }
