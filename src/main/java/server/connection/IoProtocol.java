@@ -18,8 +18,13 @@ public class IoProtocol implements Runnable, Closeable {
     private void scan(Vector<Session> sessions) {
         for (Session ses : sessions) {
             if (ses.isClosed()) continue;
-            if (ses.hasIncomingData()) handleInput(ses, ses.pull());
+            else if (ses.hasIncomingData()) handleInput(ses, ses.pull());
+            removeClosed();
         }
+    }
+
+    private void removeClosed() {
+        for (Session s : sessions) if (s.isClosed()) sessions.remove(s);
     }
 
     // PROTOCOL START

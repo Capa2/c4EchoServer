@@ -13,8 +13,8 @@ public class ChatServer {
                 ip = args[0];
                 port = Integer.parseInt(args[1]);
                 logFile = args[2];
-            } else { // UNCOMMENT THIS TO DISALLOW NO ARGS IN MAIN
-                //throw new IllegalArgumentException("Server not provided with the right arguments");
+            } else {
+                throw new IllegalArgumentException("Server not provided with the right arguments");
             }
         } catch (NumberFormatException ne) {
             System.out.println("Illegal inputs provided when starting the server!");

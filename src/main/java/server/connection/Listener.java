@@ -26,13 +26,10 @@ public class Listener implements Runnable, Closeable {
             System.out.println("Client connected from " + serverSocket.getLocalSocketAddress());
         } catch (IOException e) {
             e.printStackTrace();
+            close();
         }
         if (s.isConnected()) sessions.add(new Session(s));
 
-    }
-
-    private void removeClosed() {
-        for (Session s : sessions) if (s.isClosed()) sessions.remove(s);
     }
 
 
@@ -40,7 +37,6 @@ public class Listener implements Runnable, Closeable {
     public void run() {
         while (isOnline()) {
             listen(serverSocket);
-            removeClosed();
         }
     }
 
