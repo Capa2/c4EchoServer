@@ -9,7 +9,6 @@ import java.util.concurrent.Executors;
 public class Server {
     final private Vector<Session> sessions;
     final private ExecutorService executor; // thread pool
-
     public Server(int port) {
         sessions = new Vector<>(); // thread safe storage of client sockets
         executor = Executors.newFixedThreadPool(2);

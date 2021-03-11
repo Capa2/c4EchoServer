@@ -33,7 +33,6 @@ public class Listener implements Runnable, Closeable {
 
     }
 
-
     @Override
     public void run() {
         while (isOnline()) {

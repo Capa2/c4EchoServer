@@ -17,37 +17,41 @@ public class Session implements Closeable {
             out = new DataOutputStream(socket.getOutputStream());
         } catch (IOException e) {
             e.printStackTrace();
+            close();
         }
     }
 
-    public void push(String string) {
+    public synchronized void push(String string) {
         try {
             out.writeUTF(string);
             System.out.println("OUT@" + socket.getLocalSocketAddress() + ": " + string);
         } catch (IOException e) {
             e.printStackTrace();
+            close();
         } finally {
             if (string.startsWith("CLOSE#")) close();
         }
     }
 
-    public String pull() {
+    public synchronized String pull() {
         try {
             String input = in.readUTF();
             System.out.println("IN@" + socket.getLocalSocketAddress() + ": " + input);
             return input;
         } catch (IOException e) {
             e.printStackTrace();
+            close();
         }
         return null;
     }
 
-    public boolean hasIncomingData() {
+    public synchronized boolean hasIncomingData() {
         int bytes = 0;
         try {
             bytes = in.available();
         } catch (IOException e) {
             e.printStackTrace();
+            close();
         }
         return bytes > 0;
     }

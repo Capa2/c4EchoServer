@@ -24,7 +24,7 @@ public class IoProtocol implements Runnable, Closeable {
     }
 
     // PROTOCOL START
-    private void handleInput(Session ses, String input) {
+    private synchronized void handleInput(Session ses, String input) {
         StringTokenizer tokenizer = new StringTokenizer(input, "#");
         int tokenCount = tokenizer.countTokens();
         if (tokenCount <= 0 || tokenCount >= 4) {
@@ -43,8 +43,7 @@ public class IoProtocol implements Runnable, Closeable {
                 for (String validName : validNames) {
                     if (myNameIs.equals(validName)) {
                         ses.setUser(validName);
-                        for (Session s : sessions) if (s.getUser() != null) s.push(getOnlineString());
-                        break;
+                        sessions.forEach(s -> {if (s.getUser() != null) s.push(getOnlineString());});
                     }
                 }
                 if (ses.getUser() == null) ses.push("CLOSE#2"); // user not found
@@ -60,25 +59,24 @@ public class IoProtocol implements Runnable, Closeable {
                 /* if (receiver.contains(",")) {
                     rx = receiver.split(","); // separates usernames in case of multiple recipients
                 }*/
-                for (Session s : sessions) {
+                sessions.forEach(s -> {
                  /* for (int i = 0; i <= rx.length - 1; i++) {  // sends message to each recipient in case of multiple recipients
                         if (s.getUser() == null || !rx[i].equals(s.getUser()) && !rx[i].equals("*")) continue;
                         s.push("MESSAGE#" + message);
                     }*/
-                    if (s.getUser() == null || !receiver.equals(s.getUser()) && !receiver.equals("*")) continue;
-                    s.push("MESSAGE#" + message);
-                }
+                    if (s.getUser() != null && receiver.equals(s.getUser()) || receiver.equals("*")) s.push("MESSAGE#" + message);
+                });
             } else ses.push("CLOSE#1"); // wrong amount of tokens for message
         } else ses.push("CLOSE#1"); // user didn't call CONNECT, SEND or CLOSE
     } // PROTOCOL END
 
-    private String getOnlineString() {
+    private synchronized String getOnlineString() {
         StringBuilder onlineUsers = new StringBuilder("ONLINE#");
-        for (Session s : sessions)
+        sessions.forEach(s -> {
             if (s.getUser() != null) {
                 onlineUsers.append(s.getUser());
                 onlineUsers.append(",");
-            }
+            }});
         onlineUsers.deleteCharAt(onlineUsers.lastIndexOf(","));
         System.out.println(onlineUsers);
         return onlineUsers.toString();
