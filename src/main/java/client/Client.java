@@ -16,7 +16,7 @@ public class Client {
 
         Scanner scn = new Scanner(System.in);
 
-        InetAddress ip = InetAddress.getByName("localhost");
+        InetAddress ip = InetAddress.getByName("karpantschof.com");
 
         Socket s = new Socket(ip, ServerPort);
 
@@ -32,6 +32,16 @@ public class Client {
 
                     try {
                         dos.writeUTF(msg);
+                        if (msg.contains("CLOSE#0")) {
+                            System.out.println("Your connection has been closed");
+                        }
+                        if (msg.contains("CLOSE#1")) {
+                            System.out.println("Illegal input");
+                        }
+                        if (msg.contains("CLOSE#2")) {
+                            System.out.println("Invalid Username");
+                        }
+
                     } catch (IOException e) {
                         try {
                             s.close();
