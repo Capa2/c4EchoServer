@@ -2,13 +2,12 @@ package server.connection;
 
 import java.io.*;
 import java.net.Socket;
+import java.net.SocketAddress;
 
 public class Session implements Closeable {
     final private Socket socket;
     private DataInputStream in;
     private DataOutputStream out;
-    private String user;
-    private boolean isClosed;
 
     public Session(Socket socket) {
         this.socket = socket;
@@ -21,10 +20,10 @@ public class Session implements Closeable {
         }
     }
 
-    public synchronized void push(String string) {
+    public void push(String string) {
         try {
             out.writeUTF(string);
-            System.out.println("OUT@" + socket.getLocalSocketAddress() + ": " + string);
+            System.out.println("OUT@" + getAddress() + ": " + string);
         } catch (IOException e) {
             e.printStackTrace();
             close();
@@ -33,11 +32,11 @@ public class Session implements Closeable {
         }
     }
 
-    public synchronized String pull() {
+    public String pull() {
         try {
-            String input = in.readUTF();
-            System.out.println("IN@" + socket.getLocalSocketAddress() + ": " + input);
-            return input;
+            String pull = in.readUTF();
+            System.out.println("IN@" + getAddress() + ": " + pull);
+            return pull;
         } catch (IOException e) {
             e.printStackTrace();
             close();
@@ -45,7 +44,7 @@ public class Session implements Closeable {
         return null;
     }
 
-    public synchronized boolean hasIncomingData() {
+    public boolean hasIncomingData() {
         int bytes = 0;
         try {
             bytes = in.available();
@@ -56,16 +55,8 @@ public class Session implements Closeable {
         return bytes > 0;
     }
 
-    public void setUser(String user) {
-        this.user = user;
-    }
-
-    public String getUser() {
-        return user;
-    }
-
-    public boolean isClosed() {
-        return isClosed;
+    public String getAddress() {
+        return socket.getRemoteSocketAddress().toString();
     }
 
     public void close() {
@@ -75,8 +66,6 @@ public class Session implements Closeable {
             socket.close();
         } catch (IOException e) {
             e.printStackTrace();
-        } finally {
-            isClosed = true;
         }
     }
 }

@@ -1,4 +1,7 @@
-package server.connection;
+package server.scan;
+
+import server.io.In;
+import server.io.Out;
 
 import java.io.Closeable;
 import java.io.IOException;
@@ -6,14 +9,16 @@ import java.net.ServerSocket;
 import java.net.Socket;
 import java.util.Vector;
 
-public class Listener implements Runnable, Closeable {
+public class ClientScan implements Runnable, Closeable {
     private ServerSocket serverSocket;
-    final private Vector<Session> sessions;
+    private Vector<In> ins;
+    private Vector<Out> outs;
 
-    public Listener(Vector<Session> sessions, int port) {
-        this.sessions = sessions;
+    public ClientScan(Vector<In> ins, Vector<Out> outs, int port) {
+        this.ins = ins;
+        this.outs = outs;
         try {
-            this.serverSocket = new ServerSocket(port);
+            serverSocket = new ServerSocket(port);
         } catch (IOException e) {
             e.printStackTrace();
             close();
@@ -21,16 +26,22 @@ public class Listener implements Runnable, Closeable {
     }
 
     private void listen(ServerSocket serverSocket) {
-        Socket s = null;
         try {
-            s = serverSocket.accept();
-            System.out.println("Client connected from " + s.getLocalSocketAddress());
+            Socket c = serverSocket.accept();
+            storeIo(c);
         } catch (IOException e) {
             e.printStackTrace();
             close();
         }
-        if (s != null) sessions.add(new Session(s));
+    }
 
+    private synchronized void storeIo(Socket c) {
+        ins.add(new In(c));
+        outs.add(new Out(c));
+    }
+
+    public boolean isOnline() {
+        return !serverSocket.isClosed();
     }
 
     @Override
@@ -46,12 +57,6 @@ public class Listener implements Runnable, Closeable {
             serverSocket.close();
         } catch (IOException e) {
             e.printStackTrace();
-        } finally {
-            System.out.println("Serversocket closed.");
         }
-    }
-
-    public boolean isOnline() {
-        return !serverSocket.isClosed();
     }
 }
