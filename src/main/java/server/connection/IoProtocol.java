@@ -3,6 +3,7 @@ package server.connection;
 import java.io.*;
 import java.util.StringTokenizer;
 import java.util.Vector;
+import java.util.concurrent.atomic.AtomicInteger;
 
 public class IoProtocol implements Runnable, Closeable {
     final private Vector<Session> sessions;
@@ -75,10 +76,25 @@ public class IoProtocol implements Runnable, Closeable {
     private synchronized String getOnlineString() {
         StringBuilder onlineUsers = new StringBuilder("ONLINE#");
         sessions.forEach(s -> {
+
+            int usernameLength = 0;
+
             if (s.getUser() != null) {
                 onlineUsers.append(s.getUser());
                 onlineUsers.append(",");
-            }});
+                usernameLength = s.getUser().length();
+
+            }
+            if (s.isClosed() == true) {
+                onlineUsers.delete(onlineUsers.length()-usernameLength-1, onlineUsers.length()-1);
+                System.out.println(s.getUser());
+                onlineUsers.deleteCharAt(onlineUsers.lastIndexOf(","));
+
+
+                //deletes last logged in user when someone logs off.
+                //fix this so it deletes the correct user.
+            }
+        });
         onlineUsers.deleteCharAt(onlineUsers.lastIndexOf(","));
         System.out.println(onlineUsers);
         return onlineUsers.toString();
