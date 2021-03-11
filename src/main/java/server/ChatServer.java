@@ -14,7 +14,7 @@ public class ChatServer {
                 port = Integer.parseInt(args[1]);
                 logFile = args[2];
             } else {
-                throw new IllegalArgumentException("Server not provided with the right arguments");
+            //    throw new IllegalArgumentException("Server not provided with the right arguments");
             }
         } catch (NumberFormatException ne) {
             System.out.println("Illegal inputs provided when starting the server!");

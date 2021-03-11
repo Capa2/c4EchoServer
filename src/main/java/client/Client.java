@@ -32,6 +32,7 @@ public class Client {
 
                     try {
                         dos.writeUTF(msg);
+
                     } catch (IOException e) {
                         try {
                             s.close();
@@ -55,6 +56,15 @@ public class Client {
                     try {
                         String msg = dis.readUTF();
                         System.out.println(msg);
+                        if (msg.contains("CLOSE#0")) {
+                            System.out.println("Your connection has been closed");
+                        }
+                        else if (msg.contains("CLOSE#1")) {
+                            System.out.println("Illegal input");
+                        }
+                        else if (msg.contains("CLOSE#2")) {
+                            System.out.println("Invalid Username");
+                        }
                     } catch (IOException e) {
                         try {
                             s.close();

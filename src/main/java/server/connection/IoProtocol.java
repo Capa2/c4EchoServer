@@ -56,6 +56,7 @@ public class IoProtocol implements Runnable, Closeable {
             if (tokenCount == 3) {
                 String receiver = tokenizer.nextToken();
                 String message = tokenizer.nextToken();
+
                 if (receiver.contains(",")) {
                     rx = receiver.split(","); // separates usernames in case of multiple recipients
                 }
