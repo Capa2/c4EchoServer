@@ -17,7 +17,7 @@ public class IoProtocol implements Runnable, Closeable {
 
     private void scan(Vector<Session> sessions) {
         while (open) {
-            sessions.forEach(ses -> {
+            sessions.parallelStream().forEach(ses -> {
                 if (ses.hasIncomingData() && !ses.isClosed()) handleInput(ses, ses.pull());
             });
         }
@@ -43,7 +43,7 @@ public class IoProtocol implements Runnable, Closeable {
                 for (String validName : validNames) {
                     if (myNameIs.equals(validName)) {
                         ses.setUser(validName);
-                        sessions.forEach(s -> {if (s.getUser() != null) s.push(getOnlineString());});
+                        sessions.parallelStream().forEach(s -> {if (s.getUser() != null) s.push(getOnlineString());});
                     }
                 }
                 if (ses.getUser() == null) ses.push("CLOSE#2"); // user not found
@@ -60,7 +60,7 @@ public class IoProtocol implements Runnable, Closeable {
                     rx = receiver.split(","); // separates usernames in case of multiple recipients
                 }
                 String[] finalRx = rx;
-                sessions.forEach(s -> {
+                sessions.parallelStream().forEach(s -> {
                   for (int i = 0; i <= finalRx.length - 1; i++) {  // sends message to each recipient in case of multiple recipients
                         if (s.getUser() == null || !finalRx[i].equals(s.getUser()) && !finalRx[i].equals("*")) continue;
                         s.push("MESSAGE#" + message);
@@ -73,7 +73,7 @@ public class IoProtocol implements Runnable, Closeable {
 
     private synchronized String getOnlineString() {
         StringBuilder onlineUsers = new StringBuilder("ONLINE#");
-        sessions.forEach(s -> {
+        sessions.parallelStream().forEach(s -> {
             if (s.getUser() != null) {
                 onlineUsers.append(s.getUser());
                 onlineUsers.append(",");

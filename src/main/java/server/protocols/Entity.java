@@ -1,6 +1,8 @@
 package server.protocols;
 
 import java.util.ArrayList;
+import java.util.Collection;
+import java.util.Set;
 
 public class Entity {
     private String senderAddress;
@@ -31,6 +33,10 @@ public class Entity {
 
     public ArrayList getRecipientsAddresses() {
         return recipientsAddresses;
+    }
+
+    public void setRecipientsAddresses(Collection recipientsAddresses) {
+        this.recipientsAddresses = new ArrayList<String>(recipientsAddresses);
     }
 
     public void addRecipientAddress(String address) {

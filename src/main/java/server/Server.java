@@ -1,32 +1,39 @@
 package server;
 
-import server.connection.*;
 import server.io.In;
 import server.io.Out;
+import server.protocols.Entity;
+import server.protocols.PullTranslator;
 import server.scan.ClientScan;
+import server.scan.PullScan;
 
 import java.util.Vector;
-import java.util.concurrent.ConcurrentHashMap;
-import java.util.concurrent.ExecutorService;
-import java.util.concurrent.Executors;
+import java.util.concurrent.*;
 
 public class Server {
-    //final private Vector<Session> sessions;
     final private ConcurrentHashMap<String, String> userMap;
     final private Vector<In> ins;
     final private Vector<Out> outs;
-    final private ExecutorService executor; // thread pool
+    final private BlockingQueue<String> pullQueue;
+    final private BlockingQueue<Entity> entities;
+    final private ExecutorService executor;
+
     public Server(int port) {
-        ins = new Vector<>();
-        outs = new Vector<>();
-        executor = Executors.newFixedThreadPool(2);
-        executor.submit(new ClientScan(sessions, port)); // scans for new clients
-        executor.submit(new IoProtocol(sessions)); // handles input and output streams
+        this.userMap = new ConcurrentHashMap<>();
+        this.userMap.put("Johan", "free");
+        this.userMap.put("Jens", "free");
+        this.userMap.put("Alex", "free");
+
+        this.ins = new Vector<>();
+        this.outs = new Vector<>();
+        this.pullQueue = new ArrayBlockingQueue<>(100);
+        this.entities = new ArrayBlockingQueue<>(100);
+
+        executor = Executors.newFixedThreadPool(5);
+        executor.submit(new ClientScan(ins, outs, port));
+        executor.submit(new PullScan(ins));
+        executor.submit(new PullTranslator(userMap, pullQueue));
         System.out.println("Server online");
-        userMap = new ConcurrentHashMap<>();
-        userMap.put("Johan", "free");
-        userMap.put("Jens", "free");
-        userMap.put("Alex", "free");
 
     }
 }
