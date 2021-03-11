@@ -3,6 +3,7 @@ package server.connection;
 import java.io.*;
 import java.util.StringTokenizer;
 import java.util.Vector;
+import java.util.logging.Level;
 import java.util.logging.Logger;
 
 public class IoProtocol implements Runnable, Closeable {
@@ -55,8 +56,9 @@ public class IoProtocol implements Runnable, Closeable {
                     }
                 }
                 if (ses.getUser() == null) ses.push("CLOSE#2"); // user not found
-
+                logger.log(Level.WARNING, "User not found: CLOSE#2");
             } else ses.push("CLOSE#1"); // unassigned user didn't call CONNECT
+            logger.log(Level.WARNING, "unassigned user didn't call CONNECT: CLOSE#2");
         }
         // SEND PROTOCOL
         else if (token.equals("SEND")) {
@@ -74,6 +76,7 @@ public class IoProtocol implements Runnable, Closeable {
                     }*/
                     if (s.getUser() == null || !receiver.equals(s.getUser()) && !receiver.equals("*")) continue;
                     s.push("MESSAGE#" + message);
+                    logger.log(Level.INFO, this.getUser() + " sent user: " + s.getUser() + ": " + message);
                 }
             } else ses.push("CLOSE#1"); // wrong amount of tokens for message
         } else ses.push("CLOSE#1"); // user didn't call CONNECT, SEND or CLOSE

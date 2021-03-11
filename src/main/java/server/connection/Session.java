@@ -28,13 +28,15 @@ public class Session implements Closeable {
     public void push(String string) {
         try {
             out.writeUTF(string);
-            System.out.println("OUT@" + socket.getLocalSocketAddress() + ": " + string);
+            //logger.log(Level.FINE, "OUT@" + socket.getLocalSocketAddress() + ": " + string);
+            //System.out.println("OUT@" + socket.getLocalSocketAddress() + ": " + string);
+
         } catch (IOException e) {
             logger.log(Level.SEVERE, "Error in writing", e);
             //e.printStackTrace();
         } finally {
             if (string.startsWith("CLOSE#")) close();
-            logger.log(Level.INFO, "Closed the stream succesfully");
+            logger.log(Level.INFO, "Closed the stream: CLOSE#, succesfully");
         }
     }
 
