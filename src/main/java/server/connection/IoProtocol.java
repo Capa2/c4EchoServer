@@ -52,18 +52,19 @@ public class IoProtocol implements Runnable, Closeable {
         }
         // SEND PROTOCOL
         else if (token.equals("SEND")) {
-            //String[] rx = new String[0]; // String array for storing handles for multiple recipients
+            String[] rx = new String[0]; // String array for storing handles for multiple recipients
             if (tokenCount == 3) {
                 String receiver = tokenizer.nextToken();
                 String message = tokenizer.nextToken();
-                /* if (receiver.contains(",")) {
+                if (receiver.contains(",")) {
                     rx = receiver.split(","); // separates usernames in case of multiple recipients
-                }*/
+                }
+                String[] finalRx = rx;
                 sessions.forEach(s -> {
-                 /* for (int i = 0; i <= rx.length - 1; i++) {  // sends message to each recipient in case of multiple recipients
-                        if (s.getUser() == null || !rx[i].equals(s.getUser()) && !rx[i].equals("*")) continue;
+                  for (int i = 0; i <= finalRx.length - 1; i++) {  // sends message to each recipient in case of multiple recipients
+                        if (s.getUser() == null || !finalRx[i].equals(s.getUser()) && !finalRx[i].equals("*")) continue;
                         s.push("MESSAGE#" + message);
-                    }*/
+                    }
                     if (s.getUser() != null && receiver.equals(s.getUser()) || receiver.equals("*")) s.push("MESSAGE#" + message);
                 });
             } else ses.push("CLOSE#1"); // wrong amount of tokens for message
