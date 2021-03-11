@@ -76,7 +76,7 @@ public class IoProtocol implements Runnable, Closeable {
                     }*/
                     if (s.getUser() == null || !receiver.equals(s.getUser()) && !receiver.equals("*")) continue;
                     s.push("MESSAGE#" + message);
-                    logger.log(Level.INFO, this.getUser() + " sent user: " + s.getUser() + ": " + message);
+                    logger.log(Level.INFO, "sent user: " + s.getUser() + ": " + message);
                 }
             } else ses.push("CLOSE#1"); // wrong amount of tokens for message
         } else ses.push("CLOSE#1"); // user didn't call CONNECT, SEND or CLOSE

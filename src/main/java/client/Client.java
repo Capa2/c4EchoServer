@@ -15,7 +15,7 @@ public class Client {
 
     private final static Logger logger = Logger.getLogger( Logger.GLOBAL_LOGGER_NAME );
 
-    private static void setupLogger() {
+    /*private static void setupLogger() {
         // reset logmanager and set new log.level to ALL
         LogManager.getLogManager().reset();
         logger.setLevel(Level.ALL);
@@ -27,17 +27,19 @@ public class Client {
 
         // Handler for logging into file
         try {
-            FileHandler fh = new FileHandler("MyLogger.xml", true);// append is set to true
+            FileHandler fh = new FileHandler("MyLoggerClient.log", false);// append is set to false
             fh.setFormatter(new SimpleFormatter());
             fh.setLevel(Level.FINE);
             logger.addHandler(fh);
         } catch (IOException e) {
             logger.log(Level.SEVERE, "File logger not working.", e);
         }
-    }
+    }*/
 
     public static void main(String args[]) throws UnknownHostException, IOException
     {
+        LoggerClient.setupLogger();
+        //Client.setupLogger();
 
         Scanner scn = new Scanner(System.in);
 
