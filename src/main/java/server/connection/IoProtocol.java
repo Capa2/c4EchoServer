@@ -16,13 +16,10 @@ public class IoProtocol implements Runnable, Closeable {
     }
 
     private void scan(Vector<Session> sessions) {
-        for (Session ses : sessions) {
-            if (ses.isClosed()) {
-                sessions.remove(ses);
-                System.out.println("Removed closed session from session list");
-                continue;
-            }
-            else if (ses.hasIncomingData()) handleInput(ses, ses.pull());
+        while (open) {
+            sessions.forEach(ses -> {
+                if (ses.hasIncomingData() && !ses.isClosed()) handleInput(ses, ses.pull());
+            });
         }
     }
 
@@ -90,7 +87,7 @@ public class IoProtocol implements Runnable, Closeable {
     @Override
     public void run() {
         open = true;
-        while (open) scan(sessions);
+        scan(sessions);
     }
 
     @Override

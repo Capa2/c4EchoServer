@@ -12,8 +12,7 @@ public class Client {
 
     final static int ServerPort = 8088;
 
-    public static void main(String args[]) throws UnknownHostException, IOException
-    {
+    public static void main(String args[]) throws UnknownHostException, IOException {
 
         Scanner scn = new Scanner(System.in);
 
@@ -24,8 +23,7 @@ public class Client {
         DataInputStream dis = new DataInputStream(s.getInputStream());
         DataOutputStream dos = new DataOutputStream(s.getOutputStream());
 
-        Thread sendMessage = new Thread(new Runnable()
-        {
+        Thread sendMessage = new Thread(new Runnable() {
             @Override
             public void run() {
                 while (true) {
@@ -33,10 +31,15 @@ public class Client {
                     String msg = scn.nextLine();
 
                     try {
-
-                         dos.writeUTF(msg);
+                        dos.writeUTF(msg);
                     } catch (IOException e) {
-                        e.printStackTrace();
+                        try {
+                            s.close();
+                        } catch (IOException ioException) {
+                            ioException.printStackTrace();
+                        }
+                        System.out.println("Closed");
+                        break;
                     }
                 }
             }
@@ -53,7 +56,13 @@ public class Client {
                         String msg = dis.readUTF();
                         System.out.println(msg);
                     } catch (IOException e) {
-                        e.printStackTrace();
+                        try {
+                            s.close();
+                        } catch (IOException ioException) {
+                            ioException.printStackTrace();
+                        }
+                        System.out.println("Closed");
+                        break;
                     }
                 }
             }

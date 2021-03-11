@@ -66,6 +66,7 @@ public class Session implements Closeable {
 
     public void close() {
         try {
+            out.flush();
             System.out.println("Closing connection from " + socket.getLocalSocketAddress());
             socket.close();
         } catch (IOException e) {
